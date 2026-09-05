@@ -2,7 +2,6 @@
 import sys
 import subprocess
 import time
-import uuid
 import pandas as pd
 import requests
 import streamlit as st
@@ -17,12 +16,13 @@ def start_backend_daemon():
         env = os.environ.copy()
         env["PYTHONPATH"] = root_dir
 
+        # Launch uvicorn with --reload and stream logs directly to Streamlit Cloud console
         subprocess.Popen(
-            [sys.executable, "-m", "uvicorn", "backend.main:app", "--host", "127.0.0.1", "--port", "8000"],
+            [sys.executable, "-m", "uvicorn", "backend.main:app", "--host", "127.0.0.1", "--port", "8000", "--reload"],
             cwd=root_dir,
             env=env,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
+            stdout=sys.stdout,
+            stderr=sys.stderr
         )
         for _ in range(15):
             try:
@@ -39,7 +39,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Initialize user session storage
+# User session storage
 if "user_submissions" not in st.session_state:
     st.session_state["user_submissions"] = []
 
@@ -177,7 +177,6 @@ with tab_underwrite:
                 if resp.status_code == 200:
                     result = resp.json()
                     
-                    # Store in user's isolated session history
                     st.session_state["user_submissions"].insert(0, {
                         "id": result["application_id"],
                         "applicant_name": result["applicant_name"],
@@ -216,9 +215,9 @@ with tab_underwrite:
                             st.success("✅ Application Approved! Meets institutional risk and loss thresholds.")
                             st.balloons()
                 else:
-                    st.error(f"API Error: {resp.text}")
+                    st.error(f"API Error ({resp.status_code}): {resp.text}")
             except Exception as e:
-                st.error("Failed to connect to FastAPI backend.")
+                st.error(f"Failed to connect to FastAPI backend: {e}")
 
 with tab_audit:
     st.subheader("Underwriting Logs & Privacy Controls")
@@ -263,8 +262,6 @@ with tab_audit:
                         df_logs = pd.DataFrame(logs)
                         df_logs["created_at"] = pd.to_datetime(df_logs["created_at"]).dt.strftime('%Y-%m-%d %H:%M:%S')
                         df_logs["default_probability"] = (df_logs["default_probability"] * 100).round(1).astype(str) + "%"
-                        
-                        # Anonymize names to comply with privacy frameworks (GDPR / GLBA)
                         df_logs["applicant_name"] = df_logs["applicant_name"].apply(mask_name)
 
                         st.dataframe(
