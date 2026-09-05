@@ -559,23 +559,31 @@ with tab_underwrite:
                     exp_col1, exp_col2 = st.columns(2)
 
                     with exp_col1:
-                        st.subheader("Adverse Action Attribution (FCRA § 615)")
-                        if not is_approved:
+                        if is_approved:
+                            st.subheader("📋 Approved Facility Term Sheet")
+                            st.markdown(f"**Assigned Credit Tier**: `{res.get('risk_tier', 'Standard')}`")
+                            
+                            term_c1, term_c2, term_c3 = st.columns(3)
+                            term_c1.metric("Offered APR", f"{res.get('offered_apr', 0.0):.2f}%")
+                            term_c2.metric("Monthly Obligation", f"DM {res.get('monthly_installment', 0.0):,.2f}")
+                            term_c3.metric("Total Interest", f"DM {res.get('total_interest', 0.0):,.2f}")
+                            st.caption("Pricing calculated via Basel risk-adjusted return on capital (RAROC).")
+                        else:
+                            st.subheader("Adverse Action Attribution (FCRA § 615)")
                             st.caption("Top risk drivers isolated via local SHAP attribution:")
                             for reason in res["adverse_action_reasons"]:
                                 st.markdown(f'<div class="risk-driver-box">⚠️ {reason}</div>', unsafe_allow_html=True)
-                        else:
-                            st.success("Risk indicators clear institutional safety criteria. No adverse codes generated.")
 
                     with exp_col2:
-                        st.subheader("Counterfactual Path to Recourse")
-                        if not is_approved:
+                        if is_approved:
+                            st.subheader("Institutional Risk Notes")
+                            st.success(f"Borrower profile clears risk threshold (PD: {pd_score*100:.1f}% vs Cutoff: {threshold*100:.1f}%). Facility authorized for disbursement.")
+                            st.balloons()
+                        else:
+                            st.subheader("Counterfactual Path to Recourse")
                             st.caption("Simulated adjustments required to achieve policy compliance:")
                             for cf in res["counterfactual_recommendations"]:
                                 st.markdown(f'<div class="action-box">💡 {cf}</div>', unsafe_allow_html=True)
-                        else:
-                            st.info("Applicant qualifies under prime credit guidelines.")
-                            st.balloons()
                 else:
                     st.error(f"Scoring Engine Error ({resp.status_code}): {resp.text}")
             except Exception as e:
