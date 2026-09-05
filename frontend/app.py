@@ -416,7 +416,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 with st.expander("ℹ️  About RiskFlow — What is this and why was it built?"):
-    st.markdown(f"""
+    st.markdown("""
     **What this is**
 
     RiskFlow is a demo of how a bank or lender could decide whether to approve or reject a loan
@@ -622,6 +622,9 @@ with tab_audit:
 
         if officer_key == "riskflow2026":
             st.success("Clearance Authenticated: Institutional Audit Log Decrypted")
+            
+            show_unmasked = st.checkbox("🔓 Reveal Full Legal Borrower Names", value=True)
+
             try:
                 audit_resp = requests.get(f"{API_URL}/api/v1/audit-trail?limit=100")
                 if audit_resp.status_code == 200:
@@ -630,12 +633,16 @@ with tab_audit:
                         df_logs = pd.DataFrame(logs)
                         df_logs["created_at"] = pd.to_datetime(df_logs["created_at"]).dt.strftime('%Y-%m-%d %H:%M:%S')
                         df_logs["default_probability"] = (df_logs["default_probability"] * 100).round(1).astype(str) + "%"
-                        df_logs["applicant_name"] = df_logs["applicant_name"].apply(mask_name)
+
+                        col_label = "Borrower Full Legal Name"
+                        if not show_unmasked:
+                            df_logs["applicant_name"] = df_logs["applicant_name"].apply(mask_name)
+                            col_label = "Borrower (Masked PII)"
 
                         st.dataframe(
                             df_logs.rename(columns={
                                 "id": "Audit ID",
-                                "applicant_name": "Borrower (Masked PII)",
+                                "applicant_name": col_label,
                                 "credit_amount": "Amount (DM)",
                                 "duration_months": "Term (Mo)",
                                 "default_probability": "Risk Score",
