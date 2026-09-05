@@ -415,6 +415,32 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+with st.expander("ℹ️  About RiskFlow — What is this and why was it built?"):
+    st.markdown(f"""
+    **RiskFlow** is a credit risk underwriting simulation built to demonstrate how a real
+    institutional lending desk could combine machine learning with regulatory-grade transparency.
+
+    **What it does**
+    - Scores a loan applicant's probability of default using a cost-calibrated gradient boosting model
+    - Applies an institutional risk threshold (τ*) to convert that score into an APPROVE / DECLINE decision
+    - Explains *why* using SHAP-based local attribution, in the same spirit as adverse-action notices
+      required under **US FCRA § 615(a)**
+    - Suggests concrete, actionable changes (counterfactual recourse) an applicant could make to
+      flip a decline into an approval
+
+    **Why it was built**
+    Most credit-scoring demos stop at "here's a probability." Real lenders operating under fair-lending
+    law can't do that — a decline has to come with a *reason*, and increasingly (under frameworks like
+    the **EU AI Act, Article 14**) with human oversight and explainability baked in. This project exists
+    to show that pipeline end-to-end: model → decision → explanation → recourse → audit trail, rather
+    than just a bare classifier.
+
+    **Who this is for**
+    A portfolio/academic project exploring explainable AI (XAI) in a regulated, high-stakes domain —
+    useful as a reference for anyone studying model governance, SHAP explainability, or building
+    decision-support tools that need to justify themselves.
+    """)
+
 tab_underwrite, tab_audit = st.tabs(["📝 Underwriting Workbench", "🔒 Compliance Audit Trail"])
 
 preset = st.session_state["preset_data"]
