@@ -68,22 +68,22 @@ if is_dark:
     C_SUCCESS_SOFT = "rgba(45, 212, 167, 0.16)"
     C_SHADOW = "0 8px 30px rgba(0,0,0,0.45)"
 else:
-    C_BG = "#FBF8F2"
-    C_BG_ALT = "#F3EEE3"
-    C_SURFACE = "#FFFFFF"
-    C_SURFACE_HOVER = "#FBF3E3"
-    C_TEXT = "#0F172A"             # Crisp deep slate
-    C_TEXT_MUTED = "#475569"       # High-contrast readable charcoal
-    C_BORDER = "rgba(29,36,48,0.12)"
-    C_PRIMARY = "#C9861A"          # Amber gold
-    C_PRIMARY_SOFT = "rgba(201, 134, 26, 0.14)"
-    C_ACCENT = "#0E9F76"           # Emerald teal
-    C_ACCENT_SOFT = "rgba(14, 159, 118, 0.14)"
-    C_DANGER = "#DC2626"
-    C_DANGER_SOFT = "rgba(220, 38, 38, 0.12)"
-    C_SUCCESS = "#0E9F76"
-    C_SUCCESS_SOFT = "rgba(14, 159, 118, 0.12)"
-    C_SHADOW = "0 8px 24px rgba(29,36,48,0.10)"
+    C_BG = "#F4F1EA"               # Soft warm cream pastel
+    C_BG_ALT = "#EBE6DC"           # Muted pastel parchment alternative
+    C_SURFACE = "#FAF8F5"          # Warm off-white card surface
+    C_SURFACE_HOVER = "#E8E2D5"
+    C_TEXT = "#2D3748"             # Soft charcoal for low glare
+    C_TEXT_MUTED = "#718096"       # Comfortable muted gray
+    C_BORDER = "rgba(45,55,72,0.12)"
+    C_PRIMARY = "#B7791F"          # Warm pastel amber
+    C_PRIMARY_SOFT = "rgba(183, 121, 31, 0.12)"
+    C_ACCENT = "#2B6CB0"           # Soft muted pastel blue
+    C_ACCENT_SOFT = "rgba(43, 108, 176, 0.12)"
+    C_DANGER = "#C53030"
+    C_DANGER_SOFT = "rgba(197, 48, 48, 0.10)"
+    C_SUCCESS = "#2F855A"
+    C_SUCCESS_SOFT = "rgba(47, 133, 90, 0.10)"
+    C_SHADOW = "0 6px 20px rgba(45,55,72,0.06)"
 
 st.markdown(f"""
 <style>
@@ -155,8 +155,8 @@ st.markdown(f"""
         to {{ opacity: 1; transform: translateY(0); }}
     }}
     @keyframes pulseGlow {{
-        0%, 100% {{ box-shadow: 0 0 0 0 rgba(245, 185, 63, 0.35); }}
-        50% {{ box-shadow: 0 0 0 8px rgba(245, 185, 63, 0); }}
+        0%, 100% {{ box-shadow: 0 0 0 0 rgba(183, 121, 31, 0.25); }}
+        50% {{ box-shadow: 0 0 0 8px rgba(183, 121, 31, 0); }}
     }}
     @keyframes gradientShift {{
         0% {{ background-position: 0% 50%; }}
@@ -270,7 +270,7 @@ st.markdown(f"""
     /* Buttons */
     .stButton > button, .stFormSubmitButton > button {{
         background: linear-gradient(90deg, {C_PRIMARY}, {C_ACCENT});
-        color: #0B0F14 !important;
+        color: {C_BG} !important;
         font-weight: 700;
         border: none;
         border-radius: 12px;
