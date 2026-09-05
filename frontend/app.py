@@ -6,11 +6,11 @@ import pandas as pd
 import requests
 import streamlit as st
 
-API_URL = http://127.0.0.1:8000
+API_URL = "http://127.0.0.1:8000"
 
 def start_backend_daemon():
     try:
-        requests.get(f{API_URL}/health, timeout=1)
+        requests.get(f"{API_URL}/health", timeout=1)
     except Exception:
         root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
         env = os.environ.copy()
@@ -139,7 +139,7 @@ def set_subprime_borrower():
     }
 
 def mask_name(name: str) -> str:
-    parts = name.split()
+    parts = str(name).split()
     masked = [p[0] + "*" * (len(p) - 1) if len(p) > 1 else p for p in parts]
     return " ".join(masked)
 
@@ -149,8 +149,8 @@ with st.sidebar:
     
     try:
         health = requests.get(f"{API_URL}/health", timeout=2).json()
-        st.success(f"Backend Active\nModel: {health['model_version']}")
-        st.metric("Policy Tolerance (τ*)", f"{health['threshold']*100:.1f}%", help="Cost-minimized decision cutoff")
+        st.success(f"Backend Active\nModel: `{health['model_version']}`")
+        st.metric("Policy Tolerance (tau*)", f"{health['threshold']*100:.1f}%")
     except Exception:
         st.error("Connecting to scoring microservice...")
 
@@ -159,16 +159,16 @@ with st.sidebar:
     st.caption("Load verified profiles to evaluate cutoff mechanics:")
     col_pre1, col_pre2 = st.columns(2)
     with col_pre1:
-        st.button("🟢 Prime", on_click=set_prime_borrower, width="stretch", help="Low-risk profile")
+        st.button("🟢 Prime", on_click=set_prime_borrower, use_container_width=True)
     with col_pre2:
-        st.button("🔴 Subprime", on_click=set_subprime_borrower, width="stretch", help="Distressed profile")
+        st.button("🔴 Subprime", on_click=set_subprime_borrower, use_container_width=True)
 
 header_col1, header_col2 = st.columns([3, 1])
 with header_col1:
     st.title("Credit Risk Underwriting Portal")
     st.markdown("Cost-Calibrated Gradient Boosting • SHAP FCRA Reason Codes • Automated Recourse")
 with header_col2:
-    st.caption("Regulatory Compliance:\nUS FCRA § 615(a) / EU AI Act Article 14")
+    st.caption("Regulatory Framework:\nUS FCRA § 615(a) / EU AI Act Article 14")
 
 tab_underwrite, tab_audit = st.tabs(["📝 Underwriting Workbench", "🔒 Compliance Audit Trail"])
 
@@ -214,7 +214,7 @@ with tab_underwrite:
         installment_rate = st.slider("Debt Service Ratio (% of Disposable Income)", 1, 4, preset["rate"])
         residence_since = preset["residence"]
 
-        submit_btn = st.form_submit_button("⚡ Run Decisioning Engine", width="stretch")
+        submit_btn = st.form_submit_button("⚡ Run Decisioning Engine", use_container_width=True)
 
     if submit_btn:
         payload = {
@@ -239,8 +239,8 @@ with tab_underwrite:
                 resp = requests.post(f"{API_URL}/api/v1/underwrite", json=payload)
                 if resp.status_code == 200:
                     res = resp.json()
-                    pd_score = res["probability_of_default"]
-                    threshold = res["threshold_applied"]
+                    pd_score = float(res["probability_of_default"])
+                    threshold = float(res["threshold_applied"])
                     is_approved = res["decision"] == "APPROVED"
 
                     st.session_state["user_submissions"].insert(0, {
@@ -329,7 +329,7 @@ with tab_audit:
                     "decision": "Decision",
                     "created_at": "Timestamp (UTC)"
                 }),
-                width="stretch"
+                use_container_width=True
             )
         else:
             st.info("No applications evaluated in this session.")
@@ -366,7 +366,7 @@ with tab_audit:
                                 "decision": "Decision",
                                 "created_at": "Timestamp (UTC)"
                             }),
-                            width="stretch"
+                            use_container_width=True
                         )
                     else:
                         st.info("Database contains no registered decisions.")
