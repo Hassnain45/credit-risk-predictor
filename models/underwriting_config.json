@@ -1,0 +1,6 @@
+{
+  "model_version": "xgb-v1.0-cost-optimized",
+  "optimal_threshold": 0.18,
+  "cost_fn_weight": 5000,
+  "cost_fp_weight": 1000
+}

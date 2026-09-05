@@ -1,0 +1,14 @@
+{
+  "Logistic Regression": {
+    "ROC-AUC": 0.8058,
+    "F1-Score": 0.6575
+  },
+  "Random Forest": {
+    "ROC-AUC": 0.7943,
+    "F1-Score": 0.6069
+  },
+  "XGBoost": {
+    "ROC-AUC": 0.7819,
+    "F1-Score": 0.5143
+  }
+}
