@@ -69,7 +69,11 @@ def evaluate_application(payload: LoanApplicationRequest, db: Session = Depends(
             threshold_applied=eval_result["threshold_applied"],
             adverse_action_reasons=eval_result["adverse_action_reasons"],
             counterfactual_recommendations=eval_result["counterfactual_recommendations"],
-            model_version=eval_result["model_version"]
+            model_version=eval_result["model_version"],
+            risk_tier=eval_result["pricing"]["risk_tier"] if eval_result.get("pricing") else None,
+            offered_apr=eval_result["pricing"]["offered_apr"] if eval_result.get("pricing") else None,
+            monthly_installment=eval_result["pricing"]["monthly_installment"] if eval_result.get("pricing") else None,
+            total_interest=eval_result["pricing"]["total_interest"] if eval_result.get("pricing") else None
         )
     except Exception as e:
         traceback.print_exc()

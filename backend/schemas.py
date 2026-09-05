@@ -29,6 +29,12 @@ class UnderwritingResponse(BaseModel):
     counterfactual_recommendations: List[str]
     model_version: str
 
+    risk_tier: Optional[str] = None
+    offered_apr: Optional[float] = None
+    monthly_installment: Optional[float] = None
+    total_interest: Optional[float] = None
+
+
 class AuditTrailResponse(BaseModel):
     id: int
     applicant_name: str
