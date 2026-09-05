@@ -323,6 +323,9 @@ st.markdown(f"""
 if "user_submissions" not in st.session_state:
     st.session_state["user_submissions"] = []
 
+if "form_version" not in st.session_state:
+    st.session_state["form_version"] = 0
+
 if "preset_data" not in st.session_state:
     st.session_state["preset_data"] = {
         "name": "Sarah Connor",
@@ -354,6 +357,7 @@ def set_prime_borrower():
         "purpose": "new car",
         "residence": 4
     }
+    st.session_state["form_version"] += 1
 
 def set_subprime_borrower():
     st.session_state["preset_data"] = {
@@ -370,6 +374,7 @@ def set_subprime_borrower():
         "purpose": "business",
         "residence": 1
     }
+    st.session_state["form_version"] += 1
 
 def mask_name(name: str) -> str:
     parts = str(name).split()
@@ -449,9 +454,10 @@ with st.expander("ℹ️  About RiskFlow — What is this and why was it built?"
 tab_underwrite, tab_audit = st.tabs(["📝 Underwriting Workbench", "🔒 Compliance Audit Trail"])
 
 preset = st.session_state["preset_data"]
+form_ver = st.session_state["form_version"]
 
 with tab_underwrite:
-    with st.form("loan_application_form"):
+    with st.form(f"loan_application_form_{form_ver}"):
         st.subheader("1. Facility & Loan Parameters")
         f_col1, f_col2, f_col3 = st.columns(3)
         with f_col1:
