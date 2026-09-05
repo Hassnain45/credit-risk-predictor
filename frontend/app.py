@@ -50,40 +50,39 @@ def toggle_theme():
 
 is_dark = st.session_state["theme"] == "dark"
 
-# Palette: Emerald + Amber (no blue). Dark = obsidian/slate base, Light = warm ivory base.
 if is_dark:
     C_BG = "#0B0F14"
     C_BG_ALT = "#111823"
     C_SURFACE = "#151D28"
     C_SURFACE_HOVER = "#1B2530"
-    C_TEXT = "#E8EEF4"
-    C_TEXT_MUTED = "#8B9AAD"
-    C_BORDER = "rgba(255,255,255,0.08)"
-    C_PRIMARY = "#F5B93F"        # amber gold
-    C_PRIMARY_SOFT = "rgba(245, 185, 63, 0.14)"
-    C_ACCENT = "#2DD4A7"         # emerald teal
-    C_ACCENT_SOFT = "rgba(45, 212, 167, 0.14)"
+    C_TEXT = "#F8FAFC"             # Crisp high-contrast off-white
+    C_TEXT_MUTED = "#94A3B8"       # Clear slate silver
+    C_BORDER = "rgba(255,255,255,0.10)"
+    C_PRIMARY = "#F5B93F"          # Amber gold
+    C_PRIMARY_SOFT = "rgba(245, 185, 63, 0.16)"
+    C_ACCENT = "#2DD4A7"           # Emerald teal
+    C_ACCENT_SOFT = "rgba(45, 212, 167, 0.16)"
     C_DANGER = "#FF6B6B"
-    C_DANGER_SOFT = "rgba(255, 107, 107, 0.12)"
+    C_DANGER_SOFT = "rgba(255, 107, 107, 0.16)"
     C_SUCCESS = "#2DD4A7"
-    C_SUCCESS_SOFT = "rgba(45, 212, 167, 0.12)"
+    C_SUCCESS_SOFT = "rgba(45, 212, 167, 0.16)"
     C_SHADOW = "0 8px 30px rgba(0,0,0,0.45)"
 else:
     C_BG = "#FBF8F2"
     C_BG_ALT = "#F3EEE3"
     C_SURFACE = "#FFFFFF"
     C_SURFACE_HOVER = "#FBF3E3"
-    C_TEXT = "#1D2430"
-    C_TEXT_MUTED = "#6B7686"
-    C_BORDER = "rgba(29,36,48,0.08)"
-    C_PRIMARY = "#C9861A"        # amber gold, deeper for contrast
-    C_PRIMARY_SOFT = "rgba(201, 134, 26, 0.12)"
-    C_ACCENT = "#0E9F76"         # emerald teal, deeper for contrast
-    C_ACCENT_SOFT = "rgba(14, 159, 118, 0.12)"
-    C_DANGER = "#E14B4B"
-    C_DANGER_SOFT = "rgba(225, 75, 75, 0.10)"
+    C_TEXT = "#0F172A"             # Crisp deep slate
+    C_TEXT_MUTED = "#475569"       # High-contrast readable charcoal
+    C_BORDER = "rgba(29,36,48,0.12)"
+    C_PRIMARY = "#C9861A"          # Amber gold
+    C_PRIMARY_SOFT = "rgba(201, 134, 26, 0.14)"
+    C_ACCENT = "#0E9F76"           # Emerald teal
+    C_ACCENT_SOFT = "rgba(14, 159, 118, 0.14)"
+    C_DANGER = "#DC2626"
+    C_DANGER_SOFT = "rgba(220, 38, 38, 0.12)"
     C_SUCCESS = "#0E9F76"
-    C_SUCCESS_SOFT = "rgba(14, 159, 118, 0.10)"
+    C_SUCCESS_SOFT = "rgba(14, 159, 118, 0.12)"
     C_SHADOW = "0 8px 24px rgba(29,36,48,0.10)"
 
 st.markdown(f"""
@@ -95,14 +94,54 @@ st.markdown(f"""
         transition: background-color 0.4s ease, color 0.4s ease;
     }}
 
+    .stApp {{
+        background: linear-gradient(160deg, {C_BG} 0%, {C_BG_ALT} 100%);
+        color: {C_TEXT} !important;
+    }}
+
+    /* Global Text & Label Visibility Enforcement */
+    .stApp p,
+    .stApp span,
+    .stApp label,
+    .stApp div[data-testid="stMarkdownContainer"] p,
+    .stApp div[data-testid="stWidgetLabel"] label,
+    .stApp div[data-testid="stWidgetLabel"] p,
+    .stApp h1, .stApp h2, .stApp h3, .stApp h4,
+    .stApp .stSelectbox label,
+    .stApp .stSlider label,
+    .stApp .stTextInput label,
+    .stApp .stNumberInput label,
+    .stApp div[data-baseweb="radio"] label,
+    .stApp div[data-testid="stRadio"] label p,
+    .stApp div[data-testid="stMetricValue"] {{
+        color: {C_TEXT} !important;
+    }}
+
+    /* Inputs, Selectboxes & Sliders */
+    .stTextInput input, 
+    .stNumberInput input,
+    div[data-baseweb="select"] > div,
+    div[data-baseweb="select"] span {{
+        color: {C_TEXT} !important;
+        background-color: {C_BG_ALT} !important;
+        border: 1px solid {C_BORDER} !important;
+    }}
+
+    /* Muted Labels & Captions */
+    .stCaption, 
+    .stCaption p, 
+    small, 
+    .rf-hero p,
+    .rf-hero-tag,
+    div[data-testid="stMetricLabel"] label,
+    div[data-testid="stMetricLabel"] p {{
+        color: {C_TEXT_MUTED} !important;
+    }}
+
     h1, h2, h3, .stTitle {{
         font-family: 'Space Grotesk', sans-serif !important;
         letter-spacing: -0.01em;
-    }}
-
-    .stApp {{
-        background: linear-gradient(160deg, {C_BG} 0%, {C_BG_ALT} 100%);
-        color: {C_TEXT};
+        color: {C_TEXT} !important;
     }}
 
     section[data-testid="stSidebar"] {{
@@ -110,14 +149,10 @@ st.markdown(f"""
         border-right: 1px solid {C_BORDER};
     }}
 
-    /* ---- Animations ---- */
+    /* Animations */
     @keyframes fadeSlideIn {{
         from {{ opacity: 0; transform: translateY(14px); }}
         to {{ opacity: 1; transform: translateY(0); }}
-    }}
-    @keyframes shimmer {{
-        0% {{ background-position: -200% 0; }}
-        100% {{ background-position: 200% 0; }}
     }}
     @keyframes pulseGlow {{
         0%, 100% {{ box-shadow: 0 0 0 0 rgba(245, 185, 63, 0.35); }}
@@ -134,7 +169,7 @@ st.markdown(f"""
         padding-top: 2rem;
     }}
 
-    /* ---- Hero header ---- */
+    /* Hero Header */
     .rf-hero {{
         background: linear-gradient(120deg, {C_PRIMARY_SOFT}, {C_ACCENT_SOFT}, {C_PRIMARY_SOFT});
         background-size: 200% 200%;
@@ -150,22 +185,11 @@ st.markdown(f"""
         font-size: 2.1rem;
         background: linear-gradient(90deg, {C_PRIMARY}, {C_ACCENT});
         -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        -webkit-text-fill-color: transparent !important;
         background-clip: text;
     }}
-    .rf-hero p {{
-        color: {C_TEXT_MUTED};
-        margin-top: 0.35rem;
-        font-size: 0.95rem;
-    }}
-    .rf-hero-tag {{
-        text-align: right;
-        color: {C_TEXT_MUTED};
-        font-size: 0.8rem;
-        line-height: 1.4;
-    }}
 
-    /* ---- Status badges ---- */
+    /* Status Badges */
     .status-badge {{
         display: inline-block;
         padding: 0.4rem 1.1rem;
@@ -179,20 +203,21 @@ st.markdown(f"""
     .status-badge:hover {{ transform: scale(1.05); }}
     .badge-approved {{
         background: {C_SUCCESS_SOFT};
-        color: {C_SUCCESS};
+        color: {C_SUCCESS} !important;
         border: 1px solid {C_SUCCESS};
     }}
     .badge-rejected {{
         background: {C_DANGER_SOFT};
-        color: {C_DANGER};
+        color: {C_DANGER} !important;
         border: 1px solid {C_DANGER};
         animation: none;
     }}
 
-    /* ---- Info boxes ---- */
+    /* Info Boxes */
     .risk-driver-box {{
         background: {C_DANGER_SOFT};
         border-left: 3px solid {C_DANGER};
+        color: {C_TEXT} !important;
         padding: 0.8rem 1.1rem;
         border-radius: 0 12px 12px 0;
         margin-bottom: 0.55rem;
@@ -208,6 +233,7 @@ st.markdown(f"""
     .action-box {{
         background: {C_ACCENT_SOFT};
         border-left: 3px solid {C_ACCENT};
+        color: {C_TEXT} !important;
         padding: 0.8rem 1.1rem;
         border-radius: 0 12px 12px 0;
         margin-bottom: 0.55rem;
@@ -220,14 +246,13 @@ st.markdown(f"""
         box-shadow: {C_SHADOW};
     }}
 
-    /* ---- Cards / surfaces ---- */
+    /* Containers */
     div[data-testid="stForm"] {{
         background: {C_SURFACE};
         border: 1px solid {C_BORDER};
         border-radius: 18px;
         padding: 1.6rem;
         box-shadow: {C_SHADOW};
-        transition: box-shadow 0.3s ease;
     }}
 
     div[data-testid="stMetric"] {{
@@ -242,27 +267,24 @@ st.markdown(f"""
         box-shadow: {C_SHADOW};
     }}
 
-    /* ---- Buttons ---- */
+    /* Buttons */
     .stButton > button, .stFormSubmitButton > button {{
         background: linear-gradient(90deg, {C_PRIMARY}, {C_ACCENT});
-        color: #0B0F14;
+        color: #0B0F14 !important;
         font-weight: 700;
         border: none;
         border-radius: 12px;
         padding: 0.6rem 1.2rem;
-        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
         box-shadow: 0 4px 14px {C_PRIMARY_SOFT};
+        transition: transform 0.2s ease, filter 0.2s ease;
     }}
     .stButton > button:hover, .stFormSubmitButton > button:hover {{
         transform: translateY(-2px) scale(1.01);
         filter: brightness(1.08);
         box-shadow: {C_SHADOW};
     }}
-    .stButton > button:active, .stFormSubmitButton > button:active {{
-        transform: translateY(0) scale(0.99);
-    }}
 
-    /* ---- Tabs ---- */
+    /* Tabs */
     .stTabs [data-baseweb="tab-list"] {{
         gap: 8px;
         border-bottom: 1px solid {C_BORDER};
@@ -270,8 +292,7 @@ st.markdown(f"""
     .stTabs [data-baseweb="tab"] {{
         border-radius: 10px 10px 0 0;
         padding: 0.6rem 1.2rem;
-        transition: all 0.25s ease;
-        color: {C_TEXT_MUTED};
+        color: {C_TEXT_MUTED} !important;
     }}
     .stTabs [aria-selected="true"] {{
         background: {C_PRIMARY_SOFT} !important;
@@ -279,47 +300,23 @@ st.markdown(f"""
         font-weight: 700;
     }}
 
-    /* ---- Inputs ---- */
-    .stTextInput input, .stNumberInput input, .stSelectbox div[data-baseweb="select"] > div {{
-        border-radius: 10px !important;
-        border: 1px solid {C_BORDER} !important;
-        background: {C_BG_ALT} !important;
-        transition: border-color 0.25s ease, box-shadow 0.25s ease;
-    }}
-    .stTextInput input:focus, .stNumberInput input:focus {{
-        border-color: {C_PRIMARY} !important;
-        box-shadow: 0 0 0 3px {C_PRIMARY_SOFT} !important;
-    }}
-
-    /* ---- Slider ---- */
+    /* Progress & Sliders */
     div[data-baseweb="slider"] > div > div {{
         background: linear-gradient(90deg, {C_ACCENT}, {C_PRIMARY}) !important;
     }}
-
-    /* ---- Progress bar ---- */
     div[role="progressbar"] > div {{
         background: linear-gradient(90deg, {C_ACCENT}, {C_PRIMARY}) !important;
         transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
     }}
 
-    /* ---- Dataframe ---- */
+    /* Tables */
     div[data-testid="stDataFrame"] {{
         border-radius: 14px;
         overflow: hidden;
         border: 1px solid {C_BORDER};
-        animation: fadeSlideIn 0.5s ease-out;
     }}
 
-    /* ---- Sidebar caption / divider polish ---- */
-    hr {{
-        border-color: {C_BORDER} !important;
-    }}
-
-    ::-webkit-scrollbar {{ width: 8px; height: 8px; }}
-    ::-webkit-scrollbar-thumb {{
-        background: {C_PRIMARY_SOFT};
-        border-radius: 8px;
-    }}
+    hr {{ border-color: {C_BORDER} !important; }}
 </style>
 """, unsafe_allow_html=True)
 
@@ -404,7 +401,7 @@ with st.sidebar:
     with col_pre2:
         st.button("🔴 Subprime", on_click=set_subprime_borrower, use_container_width=True)
 
-st.markdown(f"""
+st.markdown("""
 <div class="rf-hero">
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
         <div>
