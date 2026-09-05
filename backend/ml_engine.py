@@ -49,8 +49,6 @@ def train_and_calibrate():
     )
     model.fit(X_train_proc, y_train)
 
-    # Cost-Sensitive Threshold Optimization
-    # Cost: False Negative =  (bad debt), False Positive =  (missed interest)
     test_probs = model.predict_proba(X_test_proc)[:, 1]
     thresholds = np.linspace(0.1, 0.9, 81)
     lowest_cost = float("inf")
@@ -78,8 +76,6 @@ def train_and_calibrate():
     }
     with open(CONFIG_PATH, "w") as f:
         json.dump(config, f, indent=2)
-
-    print(f"[SUCCESS] Calibrated optimal decision threshold: {best_threshold}")
 
 class UnderwritingEngine:
     def __init__(self):
@@ -126,10 +122,18 @@ class UnderwritingEngine:
 
         decision = "REJECTED" if pd_score >= self.threshold else "APPROVED"
 
-        # Adverse Action / SHAP Explanation
+        # Adverse Action / SHAP Explanation with tensor dimension unpacking
         shap_vals = self.explainer(proc_input)
-        feature_impacts = list(zip(self.feature_names, shap_vals.values[0]))
-        # Sort factors that push risk HIGHEST
+        raw_vals = shap_vals.values[0]
+
+        if hasattr(raw_vals, "ndim") and raw_vals.ndim == 2:
+            vals = raw_vals[:, 1]  # positive class (default)
+        elif hasattr(raw_vals, "ndim") and raw_vals.ndim == 1:
+            vals = raw_vals
+        else:
+            vals = np.array(raw_vals).flatten()
+
+        feature_impacts = [(name, float(v)) for name, v in zip(self.feature_names, vals)]
         risk_drivers = sorted(feature_impacts, key=lambda x: x[1], reverse=True)
 
         adverse_reasons = []
@@ -138,10 +142,8 @@ class UnderwritingEngine:
                 clean_name = name.replace("cat__", "").replace("num__", "").replace("_", " ").title()
                 adverse_reasons.append(f"Elevated risk attributed to: {clean_name}")
 
-        # Counterfactual Suggestions (if rejected)
         counterfactuals = []
         if decision == "REJECTED":
-            # Scenario A: Shorten loan duration
             if applicant_data["duration_months"] > 12:
                 alt_data = dict(applicant_data)
                 alt_data["duration_months"] = max(12, int(applicant_data["duration_months"] * 0.6))
@@ -152,7 +154,6 @@ class UnderwritingEngine:
                         f"Reduce loan term to {alt_data['duration_months']} months (estimated PD drops to {alt_pd*100:.1f}%)."
                     )
 
-            # Scenario B: Reduce requested credit amount
             alt_data_amount = dict(applicant_data)
             alt_data_amount["credit_amount"] = round(applicant_data["credit_amount"] * 0.75, 2)
             alt_amount_df = self._prepare_dataframe(alt_data_amount)
