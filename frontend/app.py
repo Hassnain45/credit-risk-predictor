@@ -39,51 +39,287 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom Institutional Theme Styling
-st.markdown("""
+# ---------------------------------------------------------------------------
+# THEME STATE
+# ---------------------------------------------------------------------------
+if "theme" not in st.session_state:
+    st.session_state["theme"] = "dark"
+
+def toggle_theme():
+    st.session_state["theme"] = "light" if st.session_state["theme"] == "dark" else "dark"
+
+is_dark = st.session_state["theme"] == "dark"
+
+# Palette: Emerald + Amber (no blue). Dark = obsidian/slate base, Light = warm ivory base.
+if is_dark:
+    C_BG = "#0B0F14"
+    C_BG_ALT = "#111823"
+    C_SURFACE = "#151D28"
+    C_SURFACE_HOVER = "#1B2530"
+    C_TEXT = "#E8EEF4"
+    C_TEXT_MUTED = "#8B9AAD"
+    C_BORDER = "rgba(255,255,255,0.08)"
+    C_PRIMARY = "#F5B93F"        # amber gold
+    C_PRIMARY_SOFT = "rgba(245, 185, 63, 0.14)"
+    C_ACCENT = "#2DD4A7"         # emerald teal
+    C_ACCENT_SOFT = "rgba(45, 212, 167, 0.14)"
+    C_DANGER = "#FF6B6B"
+    C_DANGER_SOFT = "rgba(255, 107, 107, 0.12)"
+    C_SUCCESS = "#2DD4A7"
+    C_SUCCESS_SOFT = "rgba(45, 212, 167, 0.12)"
+    C_SHADOW = "0 8px 30px rgba(0,0,0,0.45)"
+else:
+    C_BG = "#FBF8F2"
+    C_BG_ALT = "#F3EEE3"
+    C_SURFACE = "#FFFFFF"
+    C_SURFACE_HOVER = "#FBF3E3"
+    C_TEXT = "#1D2430"
+    C_TEXT_MUTED = "#6B7686"
+    C_BORDER = "rgba(29,36,48,0.08)"
+    C_PRIMARY = "#C9861A"        # amber gold, deeper for contrast
+    C_PRIMARY_SOFT = "rgba(201, 134, 26, 0.12)"
+    C_ACCENT = "#0E9F76"         # emerald teal, deeper for contrast
+    C_ACCENT_SOFT = "rgba(14, 159, 118, 0.12)"
+    C_DANGER = "#E14B4B"
+    C_DANGER_SOFT = "rgba(225, 75, 75, 0.10)"
+    C_SUCCESS = "#0E9F76"
+    C_SUCCESS_SOFT = "rgba(14, 159, 118, 0.10)"
+    C_SHADOW = "0 8px 24px rgba(29,36,48,0.10)"
+
+st.markdown(f"""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-    
-    html, body, [class*="css"] {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-    
-    .status-badge {
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+    html, body, [class*="css"] {{
+        font-family: 'Inter', sans-serif;
+        transition: background-color 0.4s ease, color 0.4s ease;
+    }}
+
+    h1, h2, h3, .stTitle {{
+        font-family: 'Space Grotesk', sans-serif !important;
+        letter-spacing: -0.01em;
+    }}
+
+    .stApp {{
+        background: linear-gradient(160deg, {C_BG} 0%, {C_BG_ALT} 100%);
+        color: {C_TEXT};
+    }}
+
+    section[data-testid="stSidebar"] {{
+        background: {C_SURFACE};
+        border-right: 1px solid {C_BORDER};
+    }}
+
+    /* ---- Animations ---- */
+    @keyframes fadeSlideIn {{
+        from {{ opacity: 0; transform: translateY(14px); }}
+        to {{ opacity: 1; transform: translateY(0); }}
+    }}
+    @keyframes shimmer {{
+        0% {{ background-position: -200% 0; }}
+        100% {{ background-position: 200% 0; }}
+    }}
+    @keyframes pulseGlow {{
+        0%, 100% {{ box-shadow: 0 0 0 0 rgba(245, 185, 63, 0.35); }}
+        50% {{ box-shadow: 0 0 0 8px rgba(245, 185, 63, 0); }}
+    }}
+    @keyframes gradientShift {{
+        0% {{ background-position: 0% 50%; }}
+        50% {{ background-position: 100% 50%; }}
+        100% {{ background-position: 0% 50%; }}
+    }}
+
+    .block-container {{
+        animation: fadeSlideIn 0.5s ease-out;
+        padding-top: 2rem;
+    }}
+
+    /* ---- Hero header ---- */
+    .rf-hero {{
+        background: linear-gradient(120deg, {C_PRIMARY_SOFT}, {C_ACCENT_SOFT}, {C_PRIMARY_SOFT});
+        background-size: 200% 200%;
+        animation: gradientShift 10s ease infinite;
+        border: 1px solid {C_BORDER};
+        border-radius: 20px;
+        padding: 1.6rem 2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: {C_SHADOW};
+    }}
+    .rf-hero h1 {{
+        margin: 0;
+        font-size: 2.1rem;
+        background: linear-gradient(90deg, {C_PRIMARY}, {C_ACCENT});
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }}
+    .rf-hero p {{
+        color: {C_TEXT_MUTED};
+        margin-top: 0.35rem;
+        font-size: 0.95rem;
+    }}
+    .rf-hero-tag {{
+        text-align: right;
+        color: {C_TEXT_MUTED};
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }}
+
+    /* ---- Status badges ---- */
+    .status-badge {{
         display: inline-block;
-        padding: 0.35rem 0.9rem;
+        padding: 0.4rem 1.1rem;
         border-radius: 9999px;
         font-size: 0.85rem;
         font-weight: 700;
         letter-spacing: 0.04em;
-    }
-    .badge-approved {
-        background: rgba(16, 185, 129, 0.15);
-        color: #10B981;
-        border: 1px solid rgba(16, 185, 129, 0.3);
-    }
-    .badge-rejected {
-        background: rgba(239, 68, 68, 0.15);
-        color: #EF4444;
-        border: 1px solid rgba(239, 68, 68, 0.3);
-    }
-    
-    .risk-driver-box {
-        background: rgba(239, 68, 68, 0.06);
-        border-left: 3px solid #EF4444;
-        padding: 0.75rem 1rem;
-        border-radius: 0 8px 8px 0;
-        margin-bottom: 0.5rem;
+        animation: pulseGlow 2.2s infinite;
+        transition: transform 0.25s ease;
+    }}
+    .status-badge:hover {{ transform: scale(1.05); }}
+    .badge-approved {{
+        background: {C_SUCCESS_SOFT};
+        color: {C_SUCCESS};
+        border: 1px solid {C_SUCCESS};
+    }}
+    .badge-rejected {{
+        background: {C_DANGER_SOFT};
+        color: {C_DANGER};
+        border: 1px solid {C_DANGER};
+        animation: none;
+    }}
+
+    /* ---- Info boxes ---- */
+    .risk-driver-box {{
+        background: {C_DANGER_SOFT};
+        border-left: 3px solid {C_DANGER};
+        padding: 0.8rem 1.1rem;
+        border-radius: 0 12px 12px 0;
+        margin-bottom: 0.55rem;
         font-size: 0.9rem;
-    }
-    
-    .action-box {
-        background: rgba(59, 130, 246, 0.06);
-        border-left: 3px solid #3B82F6;
-        padding: 0.75rem 1rem;
-        border-radius: 0 8px 8px 0;
-        margin-bottom: 0.5rem;
+        transition: all 0.25s ease;
+        animation: fadeSlideIn 0.4s ease-out;
+    }}
+    .risk-driver-box:hover {{
+        transform: translateX(4px);
+        box-shadow: {C_SHADOW};
+    }}
+
+    .action-box {{
+        background: {C_ACCENT_SOFT};
+        border-left: 3px solid {C_ACCENT};
+        padding: 0.8rem 1.1rem;
+        border-radius: 0 12px 12px 0;
+        margin-bottom: 0.55rem;
         font-size: 0.9rem;
-    }
+        transition: all 0.25s ease;
+        animation: fadeSlideIn 0.4s ease-out;
+    }}
+    .action-box:hover {{
+        transform: translateX(4px);
+        box-shadow: {C_SHADOW};
+    }}
+
+    /* ---- Cards / surfaces ---- */
+    div[data-testid="stForm"] {{
+        background: {C_SURFACE};
+        border: 1px solid {C_BORDER};
+        border-radius: 18px;
+        padding: 1.6rem;
+        box-shadow: {C_SHADOW};
+        transition: box-shadow 0.3s ease;
+    }}
+
+    div[data-testid="stMetric"] {{
+        background: {C_SURFACE};
+        border: 1px solid {C_BORDER};
+        border-radius: 14px;
+        padding: 0.9rem 1.1rem;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }}
+    div[data-testid="stMetric"]:hover {{
+        transform: translateY(-3px);
+        box-shadow: {C_SHADOW};
+    }}
+
+    /* ---- Buttons ---- */
+    .stButton > button, .stFormSubmitButton > button {{
+        background: linear-gradient(90deg, {C_PRIMARY}, {C_ACCENT});
+        color: #0B0F14;
+        font-weight: 700;
+        border: none;
+        border-radius: 12px;
+        padding: 0.6rem 1.2rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        box-shadow: 0 4px 14px {C_PRIMARY_SOFT};
+    }}
+    .stButton > button:hover, .stFormSubmitButton > button:hover {{
+        transform: translateY(-2px) scale(1.01);
+        filter: brightness(1.08);
+        box-shadow: {C_SHADOW};
+    }}
+    .stButton > button:active, .stFormSubmitButton > button:active {{
+        transform: translateY(0) scale(0.99);
+    }}
+
+    /* ---- Tabs ---- */
+    .stTabs [data-baseweb="tab-list"] {{
+        gap: 8px;
+        border-bottom: 1px solid {C_BORDER};
+    }}
+    .stTabs [data-baseweb="tab"] {{
+        border-radius: 10px 10px 0 0;
+        padding: 0.6rem 1.2rem;
+        transition: all 0.25s ease;
+        color: {C_TEXT_MUTED};
+    }}
+    .stTabs [aria-selected="true"] {{
+        background: {C_PRIMARY_SOFT} !important;
+        color: {C_PRIMARY} !important;
+        font-weight: 700;
+    }}
+
+    /* ---- Inputs ---- */
+    .stTextInput input, .stNumberInput input, .stSelectbox div[data-baseweb="select"] > div {{
+        border-radius: 10px !important;
+        border: 1px solid {C_BORDER} !important;
+        background: {C_BG_ALT} !important;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }}
+    .stTextInput input:focus, .stNumberInput input:focus {{
+        border-color: {C_PRIMARY} !important;
+        box-shadow: 0 0 0 3px {C_PRIMARY_SOFT} !important;
+    }}
+
+    /* ---- Slider ---- */
+    div[data-baseweb="slider"] > div > div {{
+        background: linear-gradient(90deg, {C_ACCENT}, {C_PRIMARY}) !important;
+    }}
+
+    /* ---- Progress bar ---- */
+    div[role="progressbar"] > div {{
+        background: linear-gradient(90deg, {C_ACCENT}, {C_PRIMARY}) !important;
+        transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }}
+
+    /* ---- Dataframe ---- */
+    div[data-testid="stDataFrame"] {{
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid {C_BORDER};
+        animation: fadeSlideIn 0.5s ease-out;
+    }}
+
+    /* ---- Sidebar caption / divider polish ---- */
+    hr {{
+        border-color: {C_BORDER} !important;
+    }}
+
+    ::-webkit-scrollbar {{ width: 8px; height: 8px; }}
+    ::-webkit-scrollbar-thumb {{
+        background: {C_PRIMARY_SOFT};
+        border-radius: 8px;
+    }}
 </style>
 """, unsafe_allow_html=True)
 
@@ -146,7 +382,12 @@ def mask_name(name: str) -> str:
 with st.sidebar:
     st.title("⚖️ RiskFlow Engine")
     st.caption("Institutional Credit Decisioning Architecture")
-    
+
+    theme_label = "🌙 Dark Mode" if is_dark else "☀️ Light Mode"
+    st.toggle(theme_label, value=is_dark, key="theme_toggle", on_change=toggle_theme)
+
+    st.divider()
+
     try:
         health = requests.get(f"{API_URL}/health", timeout=2).json()
         st.success(f"Backend Active\nModel: `{health['model_version']}`")
@@ -163,12 +404,19 @@ with st.sidebar:
     with col_pre2:
         st.button("🔴 Subprime", on_click=set_subprime_borrower, use_container_width=True)
 
-header_col1, header_col2 = st.columns([3, 1])
-with header_col1:
-    st.title("Credit Risk Underwriting Portal")
-    st.markdown("Cost-Calibrated Gradient Boosting • SHAP FCRA Reason Codes • Automated Recourse")
-with header_col2:
-    st.caption("Regulatory Framework:\nUS FCRA § 615(a) / EU AI Act Article 14")
+st.markdown(f"""
+<div class="rf-hero">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+        <div>
+            <h1>Credit Risk Underwriting Portal</h1>
+            <p>Cost-Calibrated Gradient Boosting • SHAP FCRA Reason Codes • Automated Recourse</p>
+        </div>
+        <div class="rf-hero-tag">
+            Regulatory Framework:<br>US FCRA § 615(a) / EU AI Act Article 14
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 tab_underwrite, tab_audit = st.tabs(["📝 Underwriting Workbench", "🔒 Compliance Audit Trail"])
 
@@ -254,7 +502,7 @@ with tab_underwrite:
                     })
 
                     st.divider()
-                    
+
                     dec_col1, dec_col2, dec_col3 = st.columns([1.2, 1.2, 2])
 
                     with dec_col1:
@@ -307,7 +555,7 @@ with tab_underwrite:
 
 with tab_audit:
     st.subheader("Regulatory Audit Trail & Access Governance")
-    
+
     view_mode = st.radio(
         "Select Clearance Level:",
         ["👤 Active Session Records (Local)", "🔑 Institutional Compliance Ledger (Restricted)"],
@@ -336,7 +584,7 @@ with tab_audit:
 
     else:
         st.caption("Authorized access required under GLBA and Fair Lending governance frameworks.")
-        
+
         officer_key = st.text_input(
             "Authorization Key",
             type="password",
