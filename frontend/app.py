@@ -417,28 +417,33 @@ st.markdown("""
 
 with st.expander("ℹ️  About RiskFlow — What is this and why was it built?"):
     st.markdown(f"""
-    **RiskFlow** is a credit risk underwriting simulation built to demonstrate how a real
-    institutional lending desk could combine machine learning with regulatory-grade transparency.
+    **What this is**
 
-    **What it does**
-    - Scores a loan applicant's probability of default using a cost-calibrated gradient boosting model
-    - Applies an institutional risk threshold (τ*) to convert that score into an APPROVE / DECLINE decision
-    - Explains *why* using SHAP-based local attribution, in the same spirit as adverse-action notices
-      required under **US FCRA § 615(a)**
-    - Suggests concrete, actionable changes (counterfactual recourse) an applicant could make to
-      flip a decline into an approval
+    RiskFlow is a demo of how a bank or lender could decide whether to approve or reject a loan
+    application — using a computer model instead of a human loan officer making a gut call.
+
+    **How it works, in plain terms**
+
+    1. You (or a loan officer) fill in details about an applicant — income situation, loan amount,
+       job history, past repayment behavior, and so on.
+    2. The system predicts how likely that person is to fail to repay the loan.
+    3. If that risk is below the bank's comfort level, the loan gets **approved**. If it's too high,
+       it gets **declined**.
+    4. If declined, the system doesn't just say "no" — it explains **which specific factors** hurt
+       the application the most, and gives **practical suggestions** for what the applicant could
+       change to get approved next time (for example, a smaller loan amount or a longer employment
+       history).
+
+    **Why this matters**
+
+    Real banks aren't legally allowed to just reject someone and say nothing. They have to explain
+    the reason. This project was built to show that a lending decision can be automated *and* still
+    be fair and explainable — not just a black box that spits out "yes" or "no" with no reasoning.
 
     **Why it was built**
-    Most credit-scoring demos stop at "here's a probability." Real lenders operating under fair-lending
-    law can't do that — a decline has to come with a *reason*, and increasingly (under frameworks like
-    the **EU AI Act, Article 14**) with human oversight and explainability baked in. This project exists
-    to show that pipeline end-to-end: model → decision → explanation → recourse → audit trail, rather
-    than just a bare classifier.
 
-    **Who this is for**
-    A portfolio/academic project exploring explainable AI (XAI) in a regulated, high-stakes domain —
-    useful as a reference for anyone studying model governance, SHAP explainability, or building
-    decision-support tools that need to justify themselves.
+    This was created as a project to explore how AI can be used responsibly in a high-stakes area
+    like lending, where a wrong or unexplained decision can seriously affect someone's life.
     """)
 
 tab_underwrite, tab_audit = st.tabs(["📝 Underwriting Workbench", "🔒 Compliance Audit Trail"])
