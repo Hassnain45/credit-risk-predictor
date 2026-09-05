@@ -5,3 +5,6 @@ backend/__pycache__/
 .DS_Store
 
 *.db
+
+fix_*.py
+credit_underwriting.db
